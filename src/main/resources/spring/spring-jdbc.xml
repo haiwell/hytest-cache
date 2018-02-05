@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 事务模板 -->
+	<bean id="transactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<constructor-arg ref="transactionManager" />
+	</bean>
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+
+
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/develop?zeroDateTimeBehavior=convertToNull" />
+		<property name="username" value="wanghai" />
+		<property name="password" value="wanghai" />
+
+
+		<property name="initialSize" value="10" />
+		<!-- 连接池支持的最大连接数 -->
+		<property name="maxActive" value="100" />
+		<!-- 连接池中最多可空闲maxIdle个连接 -->
+		<property name="maxIdle" value="50" />
+		<!-- 连接池中最少空闲maxIdle个连接 -->
+		<property name="minIdle" value="20" />
+		<!-- 连接池中连接用完时,新的请求等待时间,毫秒 -->
+		<property name="maxWait" value="60000" />
+		<!-- testWhileIdle -->
+		<property name="testWhileIdle" value="true" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="1800000" />
+
+		<!-- 自动清除无用连接 -->
+		<!-- 配置removeAbandoned对性能会有一些影响，建议怀疑存在泄漏之后再打开。 -->
+		<property name="removeAbandoned" value="true"></property>
+		<property name="removeAbandonedTimeout" value="1800"></property>
+		<property name="logAbandoned" value="true"></property>
+
+		<property name="filters" value="stat" />
+	</bean>
+
+	<!-- 配置druid监控spring jdbc -->
+	<bean id="druid-stat-interceptor"
+		class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
+	</bean>
+
+	<bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut"
+		scope="prototype">
+		<property name="patterns">
+			<list>
+				<value>com.hi.test.service.*</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.gs.jf.model" />
+		<property name="mapperLocations" value="classpath*:com/gs/jf/mapper/**/*.xml" />
+	</bean>
+
+	<!-- scan for mappers and let them be autowired -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.gs.jf.mapper" />
+	</bean>
+
+
+</beans>
