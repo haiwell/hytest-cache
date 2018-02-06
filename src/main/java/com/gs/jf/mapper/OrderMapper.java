@@ -2,6 +2,9 @@ package com.gs.jf.mapper;
 
 import com.gs.jf.model.Order;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public interface OrderMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +17,9 @@ public interface OrderMapper {
     int updateByPrimaryKeySelective(Order record);
 
     int updateByPrimaryKey(Order record);
+
+    BigDecimal selectOrderPriceByUserCode(String userCode);
+
+    List<String> selectDistinctUserCode();
+
 }

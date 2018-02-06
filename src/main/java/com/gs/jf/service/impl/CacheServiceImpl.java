@@ -4,6 +4,8 @@ import com.gs.jf.service.CacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,12 @@ public class CacheServiceImpl implements CacheService{
 
     @Autowired
     protected RedisTemplate redisTemplate;
+
+    /**
+     * 使用cacheManger的实现可以做到切换不同的缓存类型
+     */
+    @Autowired
+    private CacheManager cacheManager;
 
     @Override
     public void putData(String key, Object value, long timeout, TimeUnit timeUnit) {
@@ -55,5 +63,21 @@ public class CacheServiceImpl implements CacheService{
             logger.error("获取数据异常" ,e);
         }
         return object;
+    }
+
+    @Override
+    public <V> V cacheGetResult(String key,String cacheName) {
+        Cache.ValueWrapper valueWrapper = cacheManager.getCache(cacheName).get(key);
+        return (V)(valueWrapper == null ? null : valueWrapper.get());
+    }
+
+    @Override
+    public void cacheRemove(String key,String cacheName) {
+        cacheManager.getCache(cacheName).evict(key);
+    }
+
+    @Override
+    public <V> void cachePut(String key, V value,String cacheName) {
+        cacheManager.getCache(cacheName).put(key,value);
     }
 }
