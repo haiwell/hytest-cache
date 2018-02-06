@@ -23,6 +23,15 @@
     from wh_order
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectOrderPriceByUserCode" resultType="BigDecimal" parameterType="String">
+    select SUM(order_price) from wh_order  where user_code = #{vaue}
+  </select>
+
+  <select id="selectDistinctUserCode" resultType="String">
+    select DISTINCT(user_code)  from wh_order
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from wh_order
     where id = #{id,jdbcType=INTEGER}

@@ -132,7 +132,7 @@ public class CachePierceTest {
 
     public void testBank() {
         long start = System.currentTimeMillis();
-        String ret = CashCommonService.post("https://www.001bank.com/backactivity/info/ActivityReportController/ptData",new HashMap<String,Object>());
+        String ret = CashCommonService.post("backactivity/info/ActivityReportController/ptData",new HashMap<String,Object>());
         long end = System.currentTimeMillis();
         System.out.println(Thread.currentThread().getName() + " 结果 : " + ret );
         System.out.println("用时 ：" + (end  - start)/1000);

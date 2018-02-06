@@ -24,9 +24,22 @@
 
 
     <!-- Redis Template-->
-    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+
+    <bean id="keySerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+    <bean id="valueSerializer" class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"
           p:connectionFactory-ref="jedisConnFactory"
-          p:keySerializer-ref="stringRedisSerializer"/>
+          p:keySerializer-ref="keySerializer" p:valueSerializer-ref="valueSerializer"/>
+
+
+    <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+        <constructor-arg index="0" ref = "redisTemplate"></constructor-arg>
+        <property name="expires">
+            <map>
+                <entry key="amount" value="100"></entry>
+                <entry key="amount_backup" value="100"></entry>
+            </map>
+        </property>
+    </bean>
 	
 </beans>
