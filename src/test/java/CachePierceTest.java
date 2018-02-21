@@ -145,5 +145,4 @@ public class CachePierceTest {
         System.out.println(new Gson().toJson(list));
     }
 
-
 }
